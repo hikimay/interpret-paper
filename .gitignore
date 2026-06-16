@@ -1,0 +1,13 @@
+# uv
+.venv/
+.python-version
+
+# output
+output/*.html
+
+# Python
+__pycache__/
+*.py[cod]
+
+# OS
+.DS_Store

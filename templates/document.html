@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{TITLE}} — 解説</title>
+
+  <!-- MathJax v3: full AMS math support -->
+  <script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      packages: {'[+]': ['ams', 'boldsymbol', 'mathtools', 'physics']},
+      tags: 'ams',
+      macros: {
+        bm:   ['\\boldsymbol{#1}', 1],
+        R:    '\\mathbb{R}',
+        E:    '\\mathbb{E}',
+        Prob: '\\mathbb{P}',
+        N:    '\\mathbb{N}',
+        Z:    '\\mathbb{Z}',
+        norm: ['\\left\\|#1\\right\\|', 1],
+        abs:  ['\\left|#1\\right|', 1],
+        inner:['\\langle #1, #2 \\rangle', 2],
+        prox: '\\operatorname{prox}',
+        proj: '\\operatorname{proj}',
+        argmin: '\\operatorname*{argmin}',
+        argmax: '\\operatorname*{argmax}',
+      }
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    }
+  };
+  </script>
+  <script id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+  <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    /* 数学的結果 (theorem / lemma / corollary / proposition) */
+    --c-result:     #2563a8;
+    --c-result-hd:  #eef4fc;
+    --c-result-bg:  #f7fafd;
+    /* 定義・仮定 (definition / assumption) */
+    --c-defn:       #1d7a4a;
+    --c-defn-hd:    #edf7f2;
+    --c-defn-bg:    #f6fbf8;
+    /* 注意 (remark) */
+    --c-remark:     #6b7280;
+    --c-remark-hd:  #f3f4f6;
+    --c-remark-bg:  #f9fafb;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --sidebar-w: 260px;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.75;
+    color: #1f2937;
+    background: #f8fafc;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── Sidebar TOC ── */
+  #toc-sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--sidebar-w);
+    height: 100vh;
+    overflow-y: auto;
+    background: #1e293b;
+    color: #94a3b8;
+    padding: 1.5rem 1rem;
+    font-size: 13px;
+    flex-shrink: 0;
+    z-index: 100;
+  }
+
+  #toc-sidebar h2 {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #475569;
+    margin-bottom: 1rem;
+    padding-left: 0.4rem;
+  }
+
+  #toc-list { list-style: none; }
+  #toc-list li { margin: 1px 0; }
+
+  #toc-list a {
+    display: block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    color: #94a3b8;
+    text-decoration: none;
+    line-height: 1.4;
+    transition: background 0.12s, color 0.12s;
+  }
+
+  #toc-list a:hover,
+  #toc-list a.active { background: #334155; color: #e2e8f0; }
+
+  .toc-h3 { padding-left: 1.2rem !important; font-size: 12px; }
+
+  #toc-sidebar::-webkit-scrollbar { width: 3px; }
+  #toc-sidebar::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+
+  /* ── Main content ── */
+  #main-content {
+    margin-left: var(--sidebar-w);
+    max-width: 820px;
+    width: 100%;
+    padding: 2.5rem 3rem 5rem;
+  }
+
+  /* ── Paper header ── */
+  #paper-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #e2e8f0;
+  }
+
+  #paper-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #0f172a;
+    margin-bottom: 0.6rem;
+  }
+
+  .paper-meta { color: #6b7280; font-size: 0.875rem; margin-bottom: 0.3rem; }
+
+  .paper-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-top: 0.4rem;
+  }
+  .paper-link:hover { text-decoration: underline; }
+
+  .generated-note { margin-top: 0.6rem; font-size: 0.78rem; color: #9ca3af; }
+
+  /* ── Typography ── */
+  h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-top: 2.75rem;
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-top: 1.6rem;
+    margin-bottom: 0.5rem;
+  }
+
+  h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #374151;
+    margin-top: 1.1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  p { margin-bottom: 0.85rem; }
+
+  ul, ol { margin: 0.4rem 0 0.85rem 1.6rem; }
+  li { margin-bottom: 0.25rem; }
+
+  /* ── Math display ── */
+  .math-block { overflow-x: auto; margin: 1.2rem 0; }
+
+  /* ── Abstract box ── */
+  .abstract-box {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 6px;
+    padding: 1.1rem 1.25rem;
+    margin: 1.25rem 0;
+  }
+  .abstract-box .box-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #0369a1;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ── Theorem-style blocks ── */
+  .block {
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+    overflow: hidden;
+  }
+  .block-header {
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.45rem 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  .block-body {
+    padding: 0.75rem 1rem;
+    font-size: 0.94rem;
+  }
+
+  /* 数学的結果: theorem / lemma / corollary / proposition */
+  .theorem, .lemma, .corollary, .proposition {
+    border-left: 3px solid var(--c-result);
+  }
+  .theorem .block-header,
+  .lemma .block-header,
+  .corollary .block-header,
+  .proposition .block-header {
+    background: var(--c-result-hd);
+    color: var(--c-result);
+  }
+  .theorem .block-body,
+  .lemma .block-body,
+  .corollary .block-body,
+  .proposition .block-body {
+    background: var(--c-result-bg);
+  }
+
+  /* 定義・仮定: definition / assumption */
+  .definition, .assumption {
+    border-left: 3px solid var(--c-defn);
+  }
+  .definition .block-header,
+  .assumption .block-header {
+    background: var(--c-defn-hd);
+    color: var(--c-defn);
+  }
+  .definition .block-body,
+  .assumption .block-body {
+    background: var(--c-defn-bg);
+  }
+
+  /* 注意: remark */
+  .remark { border-left: 3px solid var(--c-remark); }
+  .remark .block-header { background: var(--c-remark-hd); color: var(--c-remark); }
+  .remark .block-body   { background: var(--c-remark-bg); }
+
+  /* ── Proof ── */
+  .proof {
+    margin: 1rem 0;
+    padding: 0.7rem 1rem;
+    background: #f8fafc;
+    border-left: 3px solid #cbd5e1;
+    border-radius: 0 4px 4px 0;
+    font-size: 0.94rem;
+  }
+  .proof-label { font-style: italic; font-weight: 600; color: #475569; margin-right: 0.3rem; }
+  .qed { float: right; }
+
+  /* ── Algorithm ── */
+  .algorithm {
+    margin: 1.5rem 0;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    overflow: hidden;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+
+  .algorithm-header {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 0.5rem 1rem;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  .algorithm-body {
+    background: #0f172a;
+    color: #cbd5e1;
+    padding: 0.6rem 0;
+    line-height: 1.65;
+  }
+
+  .alg-line {
+    display: flex;
+    align-items: baseline;
+    padding: 0.05rem 1rem;
+  }
+  .alg-line:hover { background: #1e293b30; }
+
+  .line-num {
+    color: #475569;
+    min-width: 2rem;
+    text-align: right;
+    margin-right: 1.2rem;
+    flex-shrink: 0;
+    user-select: none;
+    font-size: 0.8rem;
+  }
+
+  .alg-kw      { color: #93c5fd; font-weight: 600; }
+  .alg-io      { color: #86efac; font-weight: 600; }
+  .alg-comment { color: #4b5563; font-style: italic; }
+  .alg-fn      { color: #c4b5fd; }
+
+  .algorithm-caption {
+    background: #1e293b;
+    color: #64748b;
+    padding: 0.35rem 1rem;
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+  }
+
+  /* ── Inline code ── */
+  code {
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+  }
+
+  .algorithm-body code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+
+  /* ── Tables ── */
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+  th, td { border: 1px solid #e2e8f0; padding: 0.45rem 0.75rem; text-align: left; }
+  th { background: #f1f5f9; font-weight: 600; }
+  tr:nth-child(even) td { background: #f8fafc; }
+
+  /* ── Responsive ── */
+  @media (max-width: 860px) {
+    #toc-sidebar { display: none; }
+    #main-content { margin-left: 0; padding: 1.5rem 1.25rem 3rem; }
+  }
+
+  @media print {
+    #toc-sidebar { display: none; }
+    #main-content { margin-left: 0; }
+  }
+  </style>
+</head>
+<body>
+
+  <nav id="toc-sidebar">
+    <h2>目次</h2>
+    <ul id="toc-list"></ul>
+  </nav>
+
+  <div id="main-content">
+    <header id="paper-header">
+      <h1>{{TITLE}}</h1>
+      <div class="paper-meta">{{AUTHORS}}</div>
+      <div class="paper-meta">{{VENUE}}</div>
+      <a class="paper-link" href="{{ORIGINAL_URL}}" target="_blank">↗ 原論文</a>
+      <div class="generated-note">Claude による解説 · {{DATE}}</div>
+    </header>
+
+    <article id="paper-body">
+{{CONTENT}}
+    </article>
+  </div>
+
+  <script>
+  // Auto-build TOC from h2/h3 in #paper-body
+  (function () {
+    const toc = document.getElementById('toc-list');
+    const headings = document.querySelectorAll('#paper-body h2, #paper-body h3');
+
+    headings.forEach((h, i) => {
+      if (!h.id) h.id = 'sec-' + i;
+      const li = document.createElement('li');
+      const a  = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = h.textContent.replace(/^[\d.]+\s*/, '');
+      if (h.tagName === 'H3') a.classList.add('toc-h3');
+      li.appendChild(a);
+      toc.appendChild(li);
+    });
+
+    // Highlight active section
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        const link = toc.querySelector(`a[href="#${e.target.id}"]`);
+        if (link) link.classList.toggle('active', e.isIntersecting);
+      });
+    }, { rootMargin: '-8% 0px -78% 0px' });
+
+    headings.forEach(h => io.observe(h));
+  })();
+  </script>
+
+</body>
+</html>
