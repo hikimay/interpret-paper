@@ -9,5 +9,8 @@ output/*.html
 __pycache__/
 *.py[cod]
 
+# Claude Code（ローカル設定）
+.claude/settings.local.json
+
 # OS
 .DS_Store
